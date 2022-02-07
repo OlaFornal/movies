@@ -1,5 +1,5 @@
 import Document, {Html, Head, Main, NextScript, DocumentContext} from 'next/document';
-import { CssBaseline } from '@nextui-org/react';
+import {Container, CssBaseline, Link, Row, Spacer} from '@nextui-org/react';
 
 class MyDocument extends Document {
 
@@ -20,6 +20,13 @@ class MyDocument extends Document {
                 <body>
                 <Main />
                 <NextScript />
+                <Container>
+                    <Spacer y={1}/>
+                    <Row justify="center" align="center">
+                        This product uses the <Link><a href={'https://www.themoviedb.org/'} target={'_blank'} rel={'noreferrer'}>TMDB API</a></Link> but is not endorsed or certified by TMDB.
+                    </Row>
+                    <Spacer y={2}/>
+                </Container>
                 </body>
             </Html>
         );
