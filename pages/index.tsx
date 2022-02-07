@@ -1,4 +1,4 @@
-import type {NextPage} from 'next'
+import type {GetStaticProps, GetStaticPropsResult, NextPage} from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -6,13 +6,23 @@ import {
     Container,
     Button,
     Input,
+    Grid,
+    Card,
+    Col,
     Spacer,
     Text,
     Link, Row
 } from '@nextui-org/react';
 import {Search} from "react-iconly";
+import {getTopRatedMovies, MovieDbResponse, MovieInterface} from "../dataPrivider/MovieDbProvider";
+import {MovieTile} from "../components/MovieTile";
 
-const Home: NextPage = () => {
+interface HomeProps {
+    movies: MovieInterface[];
+    error: string|null;
+}
+
+const Home: NextPage<HomeProps> = ({movies, error}) => {
     return (
         <div className={styles.container}>
             <Head>
@@ -31,7 +41,7 @@ const Home: NextPage = () => {
                 direction="column"
                 justify="center"
                 alignItems="center"
-                style={{height: '100vh'}}
+                style={{height: '20vh'}}
             >
                 <Link href="https://nextjs.org">
                     <Text
@@ -53,16 +63,37 @@ const Home: NextPage = () => {
                         clearable
                         contentRightStyling={false}
                         placeholder="Search for movie title..."
-                        contentRight={<Button
-                            auto
-                            color="gradient"
-                            icon={<Search set="curved" primaryColor="currentColor" />}
-                        />}
+                    />
+                    <Button
+                        auto
+                        color="gradient"
+                        icon={<Search set="curved" primaryColor="currentColor" />}
                     />
                 </Row>
             </Container>
+            {error && <Container>
+                <Row justify="center">
+                    <strong>TheMovieDb API error</strong>: {error}
+                </Row>
+            </Container>}
+            {movies && <Grid.Container gap={2} justify="center">
+                {movies.map((singleMovie) =>
+                    <MovieTile key={singleMovie.id} movie={singleMovie} />
+                )}
+            </Grid.Container>}
         </div>
     )
 }
+
+export const getStaticProps: GetStaticProps = async (context) => {
+    const topRatedResponse: MovieDbResponse = await getTopRatedMovies();
+    return {
+        props: {
+            movies: topRatedResponse.data,
+            error: topRatedResponse.error,
+        }
+    }
+
+};
 
 export default Home
