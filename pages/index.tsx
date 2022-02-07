@@ -14,7 +14,7 @@ import {
     Link, Row
 } from '@nextui-org/react';
 import {Search} from "react-iconly";
-import {getTopRatedMovies, MovieDbResponse, MovieInterface} from "../dataPrivider/MovieDbProvider";
+import {getTopRatedMovies, MovieDbResponse, MovieInterface} from "../dataProvider/MovieDbProvider";
 import {MovieTile} from "../components/MovieTile";
 
 interface HomeProps {
