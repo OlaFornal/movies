@@ -1,8 +1,8 @@
 import axios, {AxiosResponse} from "axios";
 
 export interface MovieDbResponse {
-    data: MovieInterface[],
-    error: string | null,
+    data?: MovieInterface[],
+    error?: string,
 }
 
 export interface MovieInterface {
@@ -35,11 +35,22 @@ export const getTopRatedMovies = async (): Promise<MovieDbResponse> => {
         .then((response: AxiosResponse) => {
             return {
                 data: response.data.results,
-                error: null
             };
         }).catch(error => {
             return {
-                data: [],
+                error: error.response ? error.response.data.status_message : error.toString()
+            };
+        });
+}
+
+export const searchMovies = async (query: string) : Promise<MovieDbResponse> => {
+    return await axiosClient.get('search/movie', { params: { query: encodeURIComponent(query) }})
+        .then((response: AxiosResponse) => {
+            return {
+                data: response.data.results,
+            };
+        }).catch(error => {
+            return {
                 error: error.response ? error.response.data.status_message : error.toString()
             };
         });

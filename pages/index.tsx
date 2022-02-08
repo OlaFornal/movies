@@ -7,8 +7,6 @@ import {
     Button,
     Input,
     Grid,
-    Card,
-    Col,
     Spacer,
     Text,
     Link, Row
@@ -18,7 +16,7 @@ import {getTopRatedMovies, MovieDbResponse, MovieInterface} from "../dataProvide
 import {MovieTile} from "../components/MovieTile";
 
 interface HomeProps {
-    movies: MovieInterface[];
+    movies: MovieInterface[]|null;
     error: string|null;
 }
 
@@ -89,8 +87,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const topRatedResponse: MovieDbResponse = await getTopRatedMovies();
     return {
         props: {
-            movies: topRatedResponse.data,
-            error: topRatedResponse.error,
+            movies: topRatedResponse.data ?? null,
+            error: topRatedResponse.error ?? null,
         }
     }
 
