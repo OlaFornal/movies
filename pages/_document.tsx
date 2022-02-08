@@ -22,8 +22,8 @@ class MyDocument extends Document {
                 <NextScript />
                 <Container>
                     <Spacer y={1}/>
-                    <Row align="center">
-                        This product uses the <Link><a href={'https://www.themoviedb.org/'} target={'_blank'} rel={'noreferrer'}>TMDB API</a></Link> &nbsp;but is not endorsed or certified by TMDB.
+                    <Row align="center" justify="center">
+                        <p>This product uses the <Link><a href={'https://www.themoviedb.org/'} target={'_blank'} rel={'noreferrer'}>TMDB API</a></Link> &nbsp;but is not endorsed or certified by TMDB.</p>
                     </Row>
                     <Spacer y={2}/>
                 </Container>
