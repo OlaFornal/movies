@@ -1,6 +1,6 @@
 ## About
 
-[Next.js](https://nextjs.org/) movie browser app using [TheMovieDV API](https://developers.themoviedb.org/3/getting-started/introduction) as a data source.
+[Next.js](https://nextjs.org/) movie browser app using [TheMovieDB API](https://developers.themoviedb.org/3/getting-started/introduction) as a data source.
 
 Check [live demo](https://movies-lovat-beta.vercel.app/) on Vercel Platform.
 
