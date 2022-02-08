@@ -1,34 +1,21 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## About
 
-## Getting Started
+[Next.js](https://nextjs.org/) movie browser app using [TheMovieDV API](https://developers.themoviedb.org/3/getting-started/introduction) as a data source.
 
-First, run the development server:
+Check [live demo](https://movies-lovat-beta.vercel.app/) on Vercel Platform.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* [Next.js](https://nextjs.org/) - I used [Gatsby](https://www.gatsbyjs.com/) before, and Next is just better and more flexible,
+* [Next-UI](https://nextui.org/) - UI library - still in beta, but I decided to give it a try to bootstrap this project and learn something new,
+* [TypeScript](https://www.typescriptlang.org/) - my first TS app, previously used [PropTypes](https://www.npmjs.com/package/prop-types) to make coding  a bit easier, but TS is just the next step, and I love it,
+* [Axios](https://axios-http.com/) - seems popular, so why not?
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Running on local
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+* Clone this repo,
+* Install dependencies `yarn install`,
+* [Request API key on TMDB](https://www.themoviedb.org/settings/api) - sign up first on TMDB platform, then fill the form to get one,
+* Copy `.env` to `.env.local` [`cp .env .env.local`] and put received key in `MOVIE_DB_API_KEY` value,
+* Run the app with `yarn dev`,
+* Open browser [http://localhost:3000](http://localhost:3000) (port might differ if you have 3000 already taken - check console output)
