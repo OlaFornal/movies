@@ -10,7 +10,7 @@ export const MovieTile: React.FC<MovieProps> = ({movie}) => {
     const coverImage = movie.backdrop_path ? (process.env.NEXT_PUBLIC_MOVIE_DB_ASSETS_URL + movie.backdrop_path) : '/images/no-image.svg';
 
     return (
-        <Grid xs={12} sm={6} lg={4} xl={3}>
+        <Grid xs={6} sm={4} lg={3} xl={2}>
             <Card cover css={{w: '100%'}} hoverable clickable>
                 {/*<Card.Header css={{position: 'absolute', zIndex: 1, top: 5}}>*/}
                 {/*    <Col>*/}
@@ -30,7 +30,7 @@ export const MovieTile: React.FC<MovieProps> = ({movie}) => {
                 <Card.Body>
                     <Card.Image
                         src={coverImage}
-                        height={400}
+                        height={300}
                         width="100%"
                         alt=""
                     />
