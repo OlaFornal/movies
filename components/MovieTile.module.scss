@@ -1,0 +1,10 @@
+.hoverable {
+  .showOnHover {
+    display: none;
+  }
+  &:hover {
+    .showOnHover {
+      display: block;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type {GetStaticProps, GetStaticPropsResult, NextPage} from 'next'
+import type {GetStaticProps,NextPage} from 'next'
 import Head from 'next/head'
 import debounce from 'lodash.debounce';
 import styles from '../styles/Home.module.css'
