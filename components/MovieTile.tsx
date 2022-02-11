@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Col, Grid, Row, Text} from "@nextui-org/react";
-import {MovieInterface} from "../dataProvider/TheMovieDB/movies";
+import {MovieInterface} from "../types/tmdb.movies.types";
 
 interface MovieProps {
     movie: MovieInterface
