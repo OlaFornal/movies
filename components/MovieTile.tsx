@@ -7,7 +7,7 @@ interface MovieProps {
 }
 
 export const MovieTile: React.FC<MovieProps> = ({movie}) => {
-    const coverImage = process.env.MOVIE_DB_ASSETS_URL + movie.backdrop_path;
+    const coverImage = movie.backdrop_path ? (process.env.NEXT_PUBLIC_MOVIE_DB_ASSETS_URL + movie.backdrop_path) : '/images/no-image.svg';
 
     return (
         <Grid xs={12} sm={6} lg={4} xl={3}>
@@ -32,7 +32,7 @@ export const MovieTile: React.FC<MovieProps> = ({movie}) => {
                         src={coverImage}
                         height={400}
                         width="100%"
-                        alt="Card example background"
+                        alt=""
                     />
                 </Card.Body>
                 <Card.Footer

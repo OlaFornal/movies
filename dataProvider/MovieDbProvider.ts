@@ -22,7 +22,7 @@ export interface MovieInterface {
     vote_count: number,
 }
 
-const axiosClient = axios.create({
+export const axiosTMDBClient = axios.create({
     baseURL: process.env.MOVIE_DB_API_URL,
     timeout: 1000,
     params: {
@@ -31,7 +31,7 @@ const axiosClient = axios.create({
 });
 
 export const getTopRatedMovies = async (): Promise<MovieDbResponse> => {
-    return await axiosClient.get('movie/top_rated')
+    return await axiosTMDBClient.get('movie/top_rated')
         .then((response: AxiosResponse) => {
             return {
                 data: response.data.results,
@@ -44,12 +44,14 @@ export const getTopRatedMovies = async (): Promise<MovieDbResponse> => {
 }
 
 export const searchMovies = async (query: string) : Promise<MovieDbResponse> => {
-    return await axiosClient.get('search/movie', { params: { query: encodeURIComponent(query) }})
+    return await axiosTMDBClient.get('search/movie', { params: { query: encodeURIComponent(query) }})
         .then((response: AxiosResponse) => {
+            console.log('then');
             return {
                 data: response.data.results,
             };
         }).catch(error => {
+            console.log(error)
             return {
                 error: error.response ? error.response.data.status_message : error.toString()
             };

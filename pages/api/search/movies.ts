@@ -1,21 +1,17 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {MovieDbResponse, MovieInterface, searchMovies} from "../../../dataProvider/MovieDbProvider";
-
-interface MovieSearchResponseData {
-    error?: string | undefined,
-    movies?: MovieInterface[],
-}
+import {MovieDbResponse, searchMovies} from "../../../dataProvider/MovieDbProvider";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<MovieSearchResponseData>
+    res: NextApiResponse<MovieDbResponse>
 ) {
     if (req.method === 'GET') {
-        const { q } = req.query
-        const movieSearchResponse : MovieDbResponse = await searchMovies(q.toString());
+        const { query } = req.query
+
+        const movieSearchResponse : MovieDbResponse = await searchMovies(query.toString());
+        console.log(movieSearchResponse)
         if(movieSearchResponse.data) {
-            res.status(200).json({ movies: movieSearchResponse.data })
+            res.status(200).json({ data: movieSearchResponse.data ?? null })
         } else {
             res.status(200).json({ error: movieSearchResponse.error})
         }

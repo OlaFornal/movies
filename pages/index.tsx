@@ -1,6 +1,6 @@
 import type {GetStaticProps, GetStaticPropsResult, NextPage} from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
+import debounce from 'lodash.debounce';
 import styles from '../styles/Home.module.css'
 import {
     Container,
@@ -12,15 +12,39 @@ import {
     Link, Row
 } from '@nextui-org/react';
 import {Search} from "react-iconly";
-import {getTopRatedMovies, MovieDbResponse, MovieInterface} from "../dataProvider/MovieDbProvider";
+import {getTopRatedMovies, MovieDbResponse, MovieInterface, searchMovies} from "../dataProvider/MovieDbProvider";
 import {MovieTile} from "../components/MovieTile";
+import React, {useCallback, useState} from "react";
+import {getMovieSearchResults} from "../dataProvider/InternalApi";
+import axios from "axios";
 
 interface HomeProps {
-    movies: MovieInterface[]|null;
-    error: string|null;
+    initialMovies: MovieInterface[]|null;
+    initialError: string|null;
 }
 
-const Home: NextPage<HomeProps> = ({movies, error}) => {
+// const fetcher1: Fetcher<string, MovieDbResponse> = (query) => getUserById(query);
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+const Home: NextPage<HomeProps> = ({initialMovies, initialError}) => {
+
+    const[query, setQuery] = useState('');
+    const[movies, setMovies] = useState(initialMovies);
+    const[error, setError] = useState(initialError);
+
+
+
+    const onUserSearchInput = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const query = event.target.value;
+        if(query.length > 0) {
+            const searchResult = await getMovieSearchResults(query);
+            setMovies(searchResult.data ?? null);
+        }
+    }
+
+    const debouncedUserInput = useCallback(debounce(onUserSearchInput, 500), []);
+
     return (
         <div className={styles.container}>
             <Head>
@@ -57,6 +81,8 @@ const Home: NextPage<HomeProps> = ({movies, error}) => {
                 <Spacer/>
                 <Row justify="center" align="center">
                     <Input
+                        id={'mainSearch'}
+                        onInput={debouncedUserInput}
                         width="40vw"
                         clearable
                         contentRightStyling={false}
@@ -87,8 +113,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const topRatedResponse: MovieDbResponse = await getTopRatedMovies();
     return {
         props: {
-            movies: topRatedResponse.data ?? null,
-            error: topRatedResponse.error ?? null,
+            initialMovies: topRatedResponse.data ?? null,
+            initialError: topRatedResponse.error ?? null,
         }
     }
 
