@@ -12,34 +12,28 @@ import {
     Link, Row
 } from '@nextui-org/react';
 import {Search} from "react-iconly";
-import {getTopRatedMovies, MovieDbResponse, MovieInterface, searchMovies} from "../dataProvider/MovieDbProvider";
+import {getTopRatedMovies} from "../dataProvider/TheMovieDB/movies";
 import {MovieTile} from "../components/MovieTile";
 import React, {useCallback, useState} from "react";
 import {getMovieSearchResults} from "../dataProvider/InternalApi";
-import axios from "axios";
+import {ErrorResponse, MoviesResponse, MoviesSuccessResponse} from "../types/tmdb.movies.types";
 
-interface HomeProps {
-    initialMovies: MovieInterface[]|null;
-    initialError: string|null;
+type HomeProps = {
+    results: MoviesSuccessResponse | null,
+    errors: ErrorResponse | null,
 }
 
-// const fetcher1: Fetcher<string, MovieDbResponse> = (query) => getUserById(query);
+const Home: NextPage<HomeProps> = ({results, errors}) => {
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
-
-const Home: NextPage<HomeProps> = ({initialMovies, initialError}) => {
-
-    const[query, setQuery] = useState('');
-    const[movies, setMovies] = useState(initialMovies);
-    const[error, setError] = useState(initialError);
-
-
+    const [movies, setMovies] = useState(results ? results.results : null);
+    const [error, setError] = useState(errors ? errors.status_message : null);
 
     const onUserSearchInput = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
-        if(query.length > 0) {
+        if (query.length > 0) {
             const searchResult = await getMovieSearchResults(query);
-            setMovies(searchResult.data ?? null);
+            setMovies(searchResult.results ? searchResult.results.results : null);
+            setError(searchResult.errors ? searchResult.errors.status_message : null);
         }
     }
 
@@ -91,7 +85,7 @@ const Home: NextPage<HomeProps> = ({initialMovies, initialError}) => {
                     <Button
                         auto
                         color="gradient"
-                        icon={<Search set="curved" primaryColor="currentColor" />}
+                        icon={<Search set="curved" primaryColor="currentColor"/>}
                     />
                 </Row>
             </Container>
@@ -102,7 +96,7 @@ const Home: NextPage<HomeProps> = ({initialMovies, initialError}) => {
             </Container>}
             {movies && <Grid.Container gap={2} justify="center">
                 {movies.map((singleMovie) =>
-                    <MovieTile key={singleMovie.id} movie={singleMovie} />
+                    <MovieTile key={singleMovie.id} movie={singleMovie}/>
                 )}
             </Grid.Container>}
         </div>
@@ -110,14 +104,13 @@ const Home: NextPage<HomeProps> = ({initialMovies, initialError}) => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const topRatedResponse: MovieDbResponse = await getTopRatedMovies();
+    const topRatedResponse: MoviesResponse = await getTopRatedMovies();
     return {
         props: {
-            initialMovies: topRatedResponse.data ?? null,
-            initialError: topRatedResponse.error ?? null,
+            results: topRatedResponse.results ?? null,
+            errors: topRatedResponse.errors ?? null,
         }
     }
-
 };
 
 export default Home

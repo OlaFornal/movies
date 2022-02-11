@@ -1,23 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import {MovieDbResponse, searchMovies} from "../../../dataProvider/MovieDbProvider";
+import type {NextApiRequest, NextApiResponse} from 'next'
+import {AxiosResponse} from "axios";
+import {axiosTMDBClient} from "../../../dataProvider/TheMovieDB/client";
+import {MoviesResponse} from "../../../types/tmdb.movies.types";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<MovieDbResponse>
+    res: NextApiResponse<MoviesResponse>
 ) {
-    if (req.method === 'GET') {
-        const { query } = req.query
-
-        const movieSearchResponse : MovieDbResponse = await searchMovies(query.toString());
-        console.log(movieSearchResponse)
-        if(movieSearchResponse.data) {
-            res.status(200).json({ data: movieSearchResponse.data ?? null })
-        } else {
-            res.status(200).json({ error: movieSearchResponse.error})
-        }
-    } else {
-        res.setHeader('Allow', 'GET');
-        res.status(405).json({ error: 'Method not allowed, use GET here'});
-    }
-
+    const {query} = req.query;
+    return await axiosTMDBClient.get('search/movie', {params: {query: query.toString()}})
+        .then((response: AxiosResponse) =>
+            res.status(200).json({results: response.data ?? null})
+        )
+        .catch((error) =>
+            res.status(200).json({errors: error.response ? error.response.data.status_message : error.toString()})
+        );
 }
