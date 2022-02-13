@@ -12,7 +12,7 @@ export const MovieTile: React.FC<MovieProps> = ({movie}) => {
     const coverImage = movie.poster_path ? (process.env.NEXT_PUBLIC_MOVIE_DB_ASSETS_URL + movie.poster_path) : '/images/no-image.svg';
 
     return (
-        <Grid xs={6} sm={4} md={3} lg={2}>
+        <Grid xs={6} sm={4} md={3} lg={3} xl={2}>
             <Card cover css={{w: '100%', aspectRatio: '3 / 4'}} className={styles.hoverable} hoverable clickable>
                 {/*<Card.Header css={{position: 'absolute', zIndex: 1, top: 5}} className={styles.showOnHover}>*/}
                 {/*    <Col>*/}

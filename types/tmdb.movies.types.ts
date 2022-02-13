@@ -32,3 +32,15 @@ export interface MoviesResponse {
     results?: MoviesSuccessResponse,
     errors?: ErrorResponse,
 }
+
+export enum MediaType {
+    all = 'all',
+    movie = 'movie',
+    tv = 'tv',
+    person = 'person',
+}
+
+export enum TimeWindow {
+    'day' = 'day',
+    'week' = 'week',
+}

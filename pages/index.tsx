@@ -7,64 +7,63 @@ import {
     Button,
     Input,
     Grid,
-    Spacer,
     Text,
     Link, Row
 } from '@nextui-org/react';
 import {Search} from "react-iconly";
-import {getTopRatedMovies} from "../dataProvider/TheMovieDB/movies";
+import {
+    getNowPlayingMovies,
+    getPopularMovies,
+    getTopRatedMovies, getTrendingMovies, getUpcomingMovies
+} from "../dataProvider/TheMovieDB/movies";
 import {MovieTile} from "../components/MovieTile";
-import React, {useCallback, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {getMovieSearchResults} from "../dataProvider/InternalApi";
-import {ErrorResponse, MoviesResponse, MoviesSuccessResponse} from "../types/tmdb.movies.types";
+import {MoviesResponse} from "../types/tmdb.movies.types";
 
-type HomeProps = {
-    results: MoviesSuccessResponse | null,
-    errors: ErrorResponse | null,
+interface HomeTabInterface {
+    [index: string]: string;
+}
+enum HomeTabs {
+    popular = 'Most popular',
+    trending = 'Trending',
+    topRated = 'Top rated',
+    nowPlaying = 'Now playing',
+    upcoming = 'Upcoming',
+    search = 'Search'
+}
+interface HomePropInterface {
+    [index: string]: MoviesResponse;
 }
 
-const Home: NextPage<HomeProps> = ({results, errors}) => {
+const Home: NextPage<HomePropInterface> = (props) => {
+    const [activeTab, setActiveTab] = useState<string>('popular')
+    const [movies, setMovies] = useState<MoviesResponse>(props.popular);
 
-    const [movies, setMovies] = useState(results ? results.results : null);
-    const [error, setError] = useState(errors ? errors.status_message : null);
-
-    const onUserSearchInput = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const updateSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
         if (query.length > 0) {
-            const searchResult = await getMovieSearchResults(query);
-            setMovies(searchResult.results ? searchResult.results.results : null);
-            setError(searchResult.errors ? searchResult.errors.status_message : null);
+            setActiveTab('search');
+            setMovies(await getMovieSearchResults(query));
+        } else {
+            setActiveTab('popular');
+            setMovies(props.popular);
         }
     }
 
-    const debouncedUserInput = useCallback(debounce(onUserSearchInput, 500), []);
+    const debouncedUserInput = useMemo(() => {
+        return debounce(updateSearchResults, 500)
+    }, [setMovies]);
 
     return (
         <div className={styles.container}>
             <Head>
                 <title>Movies browser</title>
-                <meta
-                    name="description"
-                    content="Browse movies"
-                />
-                <link rel="icon" href="/favicon.ico"/>
             </Head>
 
-            <Container
-                xl
-                as="main"
-                display="flex"
-                direction="column"
-                justify="center"
-                alignItems="center"
-                style={{height: '20vh'}}
-            >
-                <Link href="https://nextjs.org">
-                    <Text
-                        h1
-                        className={styles.title}
-                        size={60}
-                        css={{
+            <Container xl as="main" display="flex" direction="column" justify="center" alignItems="center" style={{height: '20vh'}}>
+                <Link href="/">
+                    <Text h1 className={styles.title} size={60} css={{
                             textGradient: '45deg, $purple500 -20%, $pink500 100%'
                         }}
                         weight="bold"
@@ -72,30 +71,48 @@ const Home: NextPage<HomeProps> = ({results, errors}) => {
                         Movie browser
                     </Text>
                 </Link>
-                <Spacer/>
-                <Row justify="center" align="center">
-                    <Input
-                        id={'mainSearch'}
-                        onInput={debouncedUserInput}
-                        width="40vw"
-                        clearable
-                        contentRightStyling={false}
-                        placeholder="Search for movie title..."
-                    />
-                    <Button
-                        auto
-                        color="gradient"
-                        icon={<Search set="curved" primaryColor="currentColor"/>}
-                    />
-                </Row>
             </Container>
-            {error && <Container>
+
+            <Grid.Container gap={2} justify="center">
+                { Object.keys(HomeTabs).map((tab) => {
+                    if(tab === 'search') {
+                        return <Grid key={tab} xs={6} md={2} >
+                            <Input
+                                id={'mainSearch'}
+                                onInput={debouncedUserInput}
+                                status={tab === activeTab ? 'secondary' : 'default' }
+                                clearable
+                                bordered={tab !== activeTab}
+                                width="100%"
+                                color="secondary"
+                                contentRight={<Search primaryColor={"currentColor"} />}
+                                placeholder="Search for movie title..."
+                            />
+                        </Grid>
+                    } else {
+                        return <Grid key={tab} xs={6} md={2} >
+                            <Button
+                                onClick={() => {setActiveTab(tab); setMovies(props[tab])}}
+                                ghost={tab !== activeTab}
+                                color="secondary" css={{w: '100%'}}
+                            >
+                                { (HomeTabs as HomeTabInterface)[tab] }
+                            </Button>
+                        </Grid>
+                    }
+                })}
+            </Grid.Container>
+
+            {movies.errors &&
+            <Container>
                 <Row justify="center">
-                    <strong>TheMovieDb API error</strong>: {error}
+                    <strong>TheMovieDb API error</strong>: {movies.errors}
                 </Row>
             </Container>}
-            {movies && <Grid.Container gap={2} justify="center">
-                {movies.map((singleMovie) =>
+
+            {movies.results &&
+            <Grid.Container gap={2} justify="center">
+                {movies.results.results.map((singleMovie) =>
                     <MovieTile key={singleMovie.id} movie={singleMovie}/>
                 )}
             </Grid.Container>}
@@ -104,11 +121,13 @@ const Home: NextPage<HomeProps> = ({results, errors}) => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const topRatedResponse: MoviesResponse = await getTopRatedMovies();
     return {
         props: {
-            results: topRatedResponse.results ?? null,
-            errors: topRatedResponse.errors ?? null,
+            topRated:  await getTopRatedMovies(),
+            popular: await getPopularMovies(),
+            nowPlaying: await getNowPlayingMovies(),
+            upcoming: await getUpcomingMovies(),
+            trending: await getTrendingMovies(),
         }
     }
 };

@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 import {axiosTMDBClient} from "./client";
-import {MoviesResponse} from "../../types/tmdb.movies.types";
+import {MediaType, MoviesResponse, TimeWindow} from "../../types/tmdb.movies.types";
 
 export const fetchMovies = async (endpoint: string, config?: object ): Promise<MoviesResponse> => {
     return await axiosTMDBClient.get(endpoint, config)
@@ -24,3 +24,8 @@ export const fetchMovies = async (endpoint: string, config?: object ): Promise<M
 }
 
 export const getTopRatedMovies = async () => fetchMovies('movie/top_rated');
+export const getPopularMovies = async () => fetchMovies('movie/popular');
+export const getNowPlayingMovies = async () => fetchMovies('movie/now_playing');
+export const getUpcomingMovies = async () => fetchMovies('movie/upcoming');
+export const getTrendingMovies = async (type = MediaType.all, time = TimeWindow.week) =>
+    fetchMovies(`trending/${type}/${time}`);

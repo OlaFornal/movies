@@ -1,5 +1,6 @@
 import Document, {Html, Head, Main, NextScript, DocumentContext} from 'next/document';
 import {Container, CssBaseline, Link, Row, Spacer} from '@nextui-org/react';
+import React from "react";
 
 class MyDocument extends Document {
 
@@ -15,6 +16,11 @@ class MyDocument extends Document {
         return (
             <Html lang="en">
                 <Head>
+                    <meta
+                        name="description"
+                        content="Olaf movie browser"
+                    />
+                    <link rel="icon" href="/favicon.ico"/>
                     {CssBaseline.flush()}
                 </Head>
                 <body>
