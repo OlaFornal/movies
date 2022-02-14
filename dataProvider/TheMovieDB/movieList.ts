@@ -1,8 +1,8 @@
 import {AxiosResponse} from "axios";
 import {axiosTMDBClient} from "./client";
-import {MediaType, MoviesResponse, TimeWindow} from "../../types/tmdb.movies.types";
+import {MediaType, MovieListResponse, TimeWindow} from "../../types/tmdb.movieList.types";
 
-export const fetchMovies = async (endpoint: string, config?: object ): Promise<MoviesResponse> => {
+export const fetchMovies = async (endpoint: string, config?: object ): Promise<MovieListResponse> => {
     return await axiosTMDBClient.get(endpoint, config)
         .then((response: AxiosResponse) => {
             return {

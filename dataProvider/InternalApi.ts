@@ -1,12 +1,12 @@
 import axios, {AxiosResponse} from "axios";
-import {MoviesResponse} from "../types/tmdb.movies.types";
+import {MovieListResponse} from "../types/tmdb.movieList.types";
 
 const axiosClient = axios.create({
     timeout: 1000
 });
 
 
-export const getMovieSearchResults = async (query: string) : Promise<MoviesResponse> => {
+export const getMovieSearchResults = async (query: string) : Promise<MovieListResponse> => {
     return await axiosClient.get('/api/search/movies', { params: { query: query }})
         .then((response: AxiosResponse) => {
             return response.data;

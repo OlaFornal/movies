@@ -15,11 +15,11 @@ import {
     getNowPlayingMovies,
     getPopularMovies,
     getTopRatedMovies, getTrendingMovies, getUpcomingMovies
-} from "../dataProvider/TheMovieDB/movies";
+} from "../dataProvider/TheMovieDB/movieList";
 import {MovieTile} from "../components/MovieTile/MovieTile";
 import React, {useMemo, useState} from "react";
 import {getMovieSearchResults} from "../dataProvider/InternalApi";
-import {MoviesResponse} from "../types/tmdb.movies.types";
+import {MovieListResponse} from "../types/tmdb.movieList.types";
 
 interface HomeTabInterface {
     [index: string]: string;
@@ -32,12 +32,12 @@ enum HomeTabs {
     upcoming = 'Upcoming',
 }
 interface HomePropInterface {
-    [index: string]: MoviesResponse;
+    [index: string]: MovieListResponse;
 }
 
 const Home: NextPage<HomePropInterface> = (props) => {
     const [activeTab, setActiveTab] = useState<string>('popular')
-    const [movies, setMovies] = useState<MoviesResponse>(props.popular);
+    const [movies, setMovies] = useState<MovieListResponse>(props.popular);
 
     const updateSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
