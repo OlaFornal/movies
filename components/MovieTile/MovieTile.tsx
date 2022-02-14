@@ -1,6 +1,6 @@
 import React from "react";
 import {Container, Button, Card, Col, Grid, Row, Text, Spacer} from "@nextui-org/react";
-import {MovieInterface} from "../types/tmdb.movies.types";
+import {MovieInterface} from "../../types/tmdb.movies.types";
 import {ArrowRightSquare, Star} from "react-iconly";
 import styles from './MovieTile.module.scss';
 

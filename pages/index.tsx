@@ -8,7 +8,7 @@ import {
     Input,
     Grid,
     Text,
-    Link, Row
+    Link, Row, FormElement
 } from '@nextui-org/react';
 import {Search} from "react-iconly";
 import {
@@ -16,7 +16,7 @@ import {
     getPopularMovies,
     getTopRatedMovies, getTrendingMovies, getUpcomingMovies
 } from "../dataProvider/TheMovieDB/movies";
-import {MovieTile} from "../components/MovieTile";
+import {MovieTile} from "../components/MovieTile/MovieTile";
 import React, {useMemo, useState} from "react";
 import {getMovieSearchResults} from "../dataProvider/InternalApi";
 import {MoviesResponse} from "../types/tmdb.movies.types";
@@ -25,12 +25,11 @@ interface HomeTabInterface {
     [index: string]: string;
 }
 enum HomeTabs {
+    search = 'Search',
     popular = 'Most popular',
     trending = 'Trending',
     topRated = 'Top rated',
-    nowPlaying = 'Now playing',
     upcoming = 'Upcoming',
-    search = 'Search'
 }
 interface HomePropInterface {
     [index: string]: MoviesResponse;
@@ -51,9 +50,20 @@ const Home: NextPage<HomePropInterface> = (props) => {
         }
     }
 
+    const handleSearchClear = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setActiveTab('popular');
+        setMovies(props.popular);
+    }
+    const handleSearchFocus = async (event: React.FocusEvent<FormElement>) => {
+        if(event.target.value) {
+            setActiveTab('search');
+            setMovies(await getMovieSearchResults(event.target.value));
+        }
+    }
+
     const debouncedUserInput = useMemo(() => {
         return debounce(updateSearchResults, 500)
-    }, [setMovies]);
+    }, [movies]);
 
     return (
         <div className={styles.container}>
@@ -61,11 +71,10 @@ const Home: NextPage<HomePropInterface> = (props) => {
                 <title>Movies browser</title>
             </Head>
 
-            <Container xl as="main" display="flex" direction="column" justify="center" alignItems="center" style={{height: '20vh'}}>
+            <Container xl as="main" display="flex" direction="column" justify="flex-start" alignItems="center" style={{height: '100px'}}>
                 <Link href="/">
-                    <Text h1 className={styles.title} size={60} css={{
-                            textGradient: '45deg, $purple500 -20%, $pink500 100%'
-                        }}
+                    <Text h1 className={styles.title} size={60}
+                          css={{textGradient: '45deg, $purple500 -20%, $pink500 100%'}}
                         weight="bold"
                     >
                         Movie browser
@@ -73,13 +82,15 @@ const Home: NextPage<HomePropInterface> = (props) => {
                 </Link>
             </Container>
 
-            <Grid.Container gap={2} justify="center">
+            <Grid.Container gap={1} justify="center">
                 { Object.keys(HomeTabs).map((tab) => {
                     if(tab === 'search') {
-                        return <Grid key={tab} xs={6} md={2} >
+                        return <Grid key={tab} xs={12} >
                             <Input
                                 id={'mainSearch'}
                                 onInput={debouncedUserInput}
+                                onFocus={handleSearchFocus}
+                                onClearClick={handleSearchClear}
                                 status={tab === activeTab ? 'secondary' : 'default' }
                                 clearable
                                 bordered={tab !== activeTab}
@@ -90,11 +101,13 @@ const Home: NextPage<HomePropInterface> = (props) => {
                             />
                         </Grid>
                     } else {
-                        return <Grid key={tab} xs={6} md={2} >
+                        return <Grid key={tab} xs={12} sm={6} md={3} >
                             <Button
                                 onClick={() => {setActiveTab(tab); setMovies(props[tab])}}
                                 ghost={tab !== activeTab}
-                                color="secondary" css={{w: '100%'}}
+                                color="secondary"
+                                auto
+                                css={{w: '100%'}}
                             >
                                 { (HomeTabs as HomeTabInterface)[tab] }
                             </Button>
@@ -125,7 +138,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
         props: {
             topRated:  await getTopRatedMovies(),
             popular: await getPopularMovies(),
-            nowPlaying: await getNowPlayingMovies(),
             upcoming: await getUpcomingMovies(),
             trending: await getTrendingMovies(),
         }
