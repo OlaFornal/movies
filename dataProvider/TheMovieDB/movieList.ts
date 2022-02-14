@@ -27,5 +27,5 @@ export const getTopRatedMovies = async () => fetchMovies('movie/top_rated');
 export const getPopularMovies = async () => fetchMovies('movie/popular');
 export const getNowPlayingMovies = async () => fetchMovies('movie/now_playing');
 export const getUpcomingMovies = async () => fetchMovies('movie/upcoming');
-export const getTrendingMovies = async (type = MediaType.all, time = TimeWindow.week) =>
+export const getTrendingMovies = async (type = MediaType.movie, time = TimeWindow.week) =>
     fetchMovies(`trending/${type}/${time}`);
