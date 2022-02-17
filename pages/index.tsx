@@ -1,8 +1,8 @@
-import type {GetStaticProps,NextPage} from 'next'
+import type {GetStaticProps, NextPage} from 'next'
 import Head from 'next/head'
 import debounce from 'lodash.debounce';
 import styles from '../styles/Home.module.css'
-import {Container, Button, Input, Grid, Text, Link, Row, Loading, FormElement} from '@nextui-org/react';
+import {Container, Card, Button, Input, Grid, Text, Link, Row, Loading, FormElement} from '@nextui-org/react';
 import {Search} from "react-iconly";
 import {
     fetchMovies, MovieListEndpoints
@@ -11,12 +11,13 @@ import {
 import {MovieTile} from "../components/MovieTile/MovieTile";
 import React, {useMemo, useState} from "react";
 import {getMovieSearchResults, paginateMovies} from "../dataProvider/InternalApi";
-import {MovieListResponse} from "../types/tmdb.movieList.types";
+import {ErrorResponse, MovieListResponse, MovieListSuccessResponse} from "../types/tmdb.movieList.types";
 import {PaginationSection} from "../components/Pagination/PaginationSection";
 
 interface HomeTabInterface {
     [index: string]: string;
 }
+
 enum HomeTabs {
     search = 'Search',
     popular = 'Most popular',
@@ -24,50 +25,63 @@ enum HomeTabs {
     topRated = 'Top rated',
     upcoming = 'Upcoming',
 }
+
 interface HomePropInterface {
     [index: string]: MovieListResponse;
 }
 
 const Home: NextPage<HomePropInterface> = (props) => {
     const [activeTab, setActiveTab] = useState<string>('popular')
-    const [movies, setMovies] = useState<MovieListResponse>(props.popular);
+    const [movies, setMovies] = useState<MovieListSuccessResponse | undefined>(props.popular.results);
+    const [errors, setErrors] = useState<ErrorResponse | undefined>(props.popular.errors);
     const [loading, setLoading] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
+    const [query, setQuery] = useState<string>('');
+
+    const updateResultState = (response: MovieListResponse) => {
+        if (response.errors) {
+            setErrors(response.errors);
+        } else {
+            setMovies(response.results);
+        }
+    }
 
     const updateSearchResults = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
+        setQuery(query.toString())
         if (query.length > 0) {
             setLoading(true);
             setActiveTab('search');
-            setMovies(await getMovieSearchResults(query));
+            await getMovieSearchResults(query).then((resonse) => updateResultState(resonse));
             setLoading(false);
             setPage(1);
         } else {
             setActiveTab('popular');
-            setMovies(props.popular);
+            setMovies(props.popular.results);
+        }
+    }
+
+    const handleSearchClear = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setActiveTab('popular');
+        setMovies(props.popular.results);
+    }
+    const handleSearchFocus = async (event: React.FocusEvent<FormElement>) => {
+        if (event.target.value) {
+            setActiveTab('search');
+            await getMovieSearchResults(event.target.value).then((resonse) => updateResultState(resonse));
         }
     }
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
-        setMovies(props[tab]);
+        setMovies(props[tab].results);
         setPage(1);
     }
 
-    const handleSearchClear = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        setActiveTab('popular');
-        setMovies(props.popular);
-    }
-    const handleSearchFocus = async (event: React.FocusEvent<FormElement>) => {
-        if(event.target.value) {
-            setActiveTab('search');
-            setMovies(await getMovieSearchResults(event.target.value));
-        }
-    }
-
-    const handlePageChange = async (page: number): Promise<void> => {
-        setMovies(await paginateMovies(activeTab, page));
-        setPage(page);
+    const handlePageChange = async (selectedPage: number): Promise<void> => {
+        selectedPage = Math.max(selectedPage, 1);
+        setPage(selectedPage);
+        await paginateMovies(activeTab, selectedPage, query).then((resonse) => updateResultState(resonse));
     }
 
     const debouncedUserInput = useMemo(() => {
@@ -80,11 +94,12 @@ const Home: NextPage<HomePropInterface> = (props) => {
                 <title>Movies browser</title>
             </Head>
 
-            <Container xl as="main" display="flex" direction="column" justify="flex-start" alignItems="center" style={{height: '100px'}}>
+            <Container xl as="main" display="flex" direction="column" justify="flex-start" alignItems="center"
+                       style={{height: '100px'}}>
                 <Link href="/">
                     <Text h1 className={styles.title} size={60}
                           css={{textGradient: '45deg, $purple500 -20%, $pink500 100%'}}
-                        weight="bold"
+                          weight="bold"
                     >
                         Movie browser
                     </Text>
@@ -92,25 +107,25 @@ const Home: NextPage<HomePropInterface> = (props) => {
             </Container>
 
             <Grid.Container gap={1} justify="center">
-                { Object.keys(HomeTabs).map((tab) => {
-                    if(tab === 'search') {
-                        return <Grid key={tab} xs={12} >
+                {Object.keys(HomeTabs).map((tab) => {
+                    if (tab === 'search') {
+                        return <Grid key={tab} xs={12}>
                             <Input
                                 id={'mainSearch'}
                                 onInput={debouncedUserInput}
                                 onFocus={handleSearchFocus}
                                 onClearClick={handleSearchClear}
-                                status={tab === activeTab ? 'secondary' : 'default' }
+                                status={tab === activeTab ? 'secondary' : 'default'}
                                 clearable
                                 bordered={tab !== activeTab}
                                 width="100%"
                                 color="secondary"
-                                contentRight={<Search primaryColor={"currentColor"} />}
+                                contentRight={<Search primaryColor={"currentColor"}/>}
                                 placeholder="Search for movie title..."
                             />
                         </Grid>
                     } else {
-                        return <Grid key={tab} xs={12} sm={6} md={3} >
+                        return <Grid key={tab} xs={12} sm={6} md={3}>
                             <Button
                                 onClick={() => handleTabChange(tab)}
                                 ghost={tab !== activeTab}
@@ -118,7 +133,7 @@ const Home: NextPage<HomePropInterface> = (props) => {
                                 auto
                                 css={{w: '100%'}}
                             >
-                                { (HomeTabs as HomeTabInterface)[tab] }
+                                {(HomeTabs as HomeTabInterface)[tab]}
                             </Button>
                         </Grid>
                     }
@@ -128,26 +143,32 @@ const Home: NextPage<HomePropInterface> = (props) => {
             {loading &&
             <Container>
                 <Row justify="center">
-                    <Loading color="secondary" type="points-opacity" size="xl" />
+                    <Loading color="secondary" type="points-opacity" size="xl"/>
                 </Row>
             </Container>}
 
-            {movies.errors &&
-            <Container display="flex" direction="column" justify="flex-start" alignItems="center" style={{height: '100px'}}>
-                <Row justify="center">
-                    <strong>TheMovieDb API error</strong>: {movies.errors}
-                </Row>
-            </Container>}
+            {errors &&
+            <Grid.Container gap={1}>
+                <Grid xs={12}>
+                    <Card color={'error'}>
+                        <Text css={{fontWeight: '$bold', color: '$white'}}>
+                            TheMovieDb API error [{errors.status_code}]: {errors.status_message}
+                        </Text>
+                    </Card>
+                </Grid>
+            </Grid.Container>}
 
-            {movies.results &&
+            {movies &&
             <>
                 <Grid.Container gap={2} justify="center">
-                    {movies.results.results.map((singleMovie) =>
+                    {movies.results.map((singleMovie) =>
                         <MovieTile key={singleMovie.id} movie={singleMovie}/>
                     )}
                 </Grid.Container>
-
-                <PaginationSection currentPage={page} totalPages={movies.results.total_pages} onPageChange={handlePageChange}/>
+                {movies.total_pages > 1 &&
+                <PaginationSection currentPage={page} totalPages={movies.total_pages}
+                                   onPageChange={handlePageChange}/>
+                }
             </>}
         </div>
     )

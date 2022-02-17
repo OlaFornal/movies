@@ -5,8 +5,10 @@ const axiosClient = axios.create({
     timeout: 3000
 });
 
-export const paginateMovies = async (type: string, page: number) : Promise<MovieListResponse> => {
-    return await axiosClient.get(`/api/movie/${type}/${page}`, { params: { type: type, page: page }})
+export const paginateMovies = async (type: string, page: number, searchQuery: string) : Promise<MovieListResponse> => {
+    const queryParams = searchQuery ? { query: searchQuery } : {};
+
+    return await axiosClient.get(`/api/movie/${type}/${page}`, { params: queryParams})
         .then((response: AxiosResponse) => {
             return response.data;
         }).catch(error => {

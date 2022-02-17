@@ -1,6 +1,6 @@
-import {AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import {axiosTMDBClient} from "./client";
-import {MovieListResponse} from "../../types/tmdb.movieList.types";
+import {ErrorResponse, MovieListResponse} from "../../types/tmdb.movieList.types";
 
 interface QueryParams {
     page?: number, // query param for pagination
@@ -27,11 +27,15 @@ export const fetchMovies = async (endpoint: string, queryParams: QueryParams = {
                 },
             };
         }).catch(error => {
+            const parsedError = parseAxiosError(error);
             return {
-                errors: {
-                    status_message: error.response ? error.response.data.status_message : error.toString(),
-                    status_code: error.response ? error.response.data.status_code : error.statusCode,
-                }
+                errors: parsedError
             };
         });
+}
+
+const parseAxiosError = (error: AxiosError) : ErrorResponse => {
+    const code = error.response?.data?.status_code ?? error.response?.status ?? 0;
+    const message = error.response?.data?.status_message ?? error.response?.data?.errors?.join() ?? error.toString();
+    return {status_code: code, status_message: message};
 }
