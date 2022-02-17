@@ -1,14 +1,12 @@
 import type {NextPage} from 'next'
 import Head from 'next/head'
-import {
-    Container,
-    Text,
-    Link,
-} from '@nextui-org/react';
+import {Container, Text, Link, Row, Col, Input} from '@nextui-org/react';
 import {getMovieDetails} from "../../../dataProvider/TheMovieDB/movieDetails";
 import {GetServerSideProps} from "next/types";
 import {MovieDetailsResponse} from "../../../types/tmdb.movieDetails.types";
 import Image from 'next/image'
+import React from "react";
+import {Search} from "react-iconly";
 
 interface MovieDetailProps {
     movieDetails: MovieDetailsResponse;
@@ -23,22 +21,44 @@ const MovieDetails: NextPage<MovieDetailProps> = ({movieDetails}) => {
                 <title>Movies browser</title>
             </Head>
 
-            <Container xl as="main" display="flex" direction="column" justify="flex-start" alignItems="center"
+            <Container xl display="flex" direction="column" justify="center" alignItems="center"
                        style={{height: '100px'}}>
-                <Link href="/">
-                    <Text h1 size={60}
-                          css={{textGradient: '45deg, $purple500 -20%, $pink500 100%'}}
-                          weight="bold"
-                    >
-                        Movie browser
-                    </Text>
-                </Link>
+                <Row>
+                    <Col>
+                        <Link href="/">
+                            <Text h2
+                                  css={{textGradient: '45deg, $purple500 -20%, $pink500 100%'}}
+                                  weight="bold"
+                            >
+                                Movie browser
+                            </Text>
+                        </Link>
+                    </Col>
+                    <Col css={{ ta: 'right'}}>
+                        <Input
+                            id={'mainSearch'}
+                            status={'default' }
+                            clearable
+                            bordered
+                            color="secondary"
+                            contentRight={<Search primaryColor={"currentColor"} />}
+                            placeholder="Search for movie title..."
+                        />
+                    </Col>
+                </Row>
             </Container>
             {movieDetails.result && <Container>
                 <Image src={coverImage} width={'500px'} height={'750px'} alt={''} />
                 <Text h1>{movieDetails.result.title}</Text>
                 <Text>{movieDetails.result.tagline}</Text>
                 <Text>{movieDetails.result.overview}</Text>
+            </Container>}
+
+            {movieDetails.errors &&
+            <Container>
+                <Row justify="center">
+                    <strong>TheMovieDb API error</strong>: {movieDetails.errors}
+                </Row>
             </Container>}
         </div>
     )

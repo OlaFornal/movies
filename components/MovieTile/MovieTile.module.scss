@@ -7,4 +7,9 @@
       display: block;
     }
   }
+  .nextui-image,
+  .nextui-image-container {
+    border-radius: 0 !important;
+    border: 10px red solid !important;
+  }
 }

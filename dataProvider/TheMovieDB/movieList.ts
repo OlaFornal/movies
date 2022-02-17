@@ -1,9 +1,22 @@
 import {AxiosResponse} from "axios";
 import {axiosTMDBClient} from "./client";
-import {MediaType, MovieListResponse, TimeWindow} from "../../types/tmdb.movieList.types";
+import {MovieListResponse} from "../../types/tmdb.movieList.types";
 
-export const fetchMovies = async (endpoint: string, config?: object ): Promise<MovieListResponse> => {
-    return await axiosTMDBClient.get(endpoint, config)
+interface QueryParams {
+    page?: number, // query param for pagination
+    query?: string // query param for search
+}
+
+export enum MovieListEndpoints {
+    topRated = 'movie/top_rated',
+    popular = 'movie/popular',
+    upcoming = 'movie/upcoming',
+    trending = 'trending/movie/week',
+    search = 'search/movie'
+}
+
+export const fetchMovies = async (endpoint: string, queryParams: QueryParams = {}): Promise<MovieListResponse> => {
+    return await axiosTMDBClient.get(endpoint, {params: queryParams})
         .then((response: AxiosResponse) => {
             return {
                 results: {
@@ -22,10 +35,3 @@ export const fetchMovies = async (endpoint: string, config?: object ): Promise<M
             };
         });
 }
-
-export const getTopRatedMovies = async () => fetchMovies('movie/top_rated');
-export const getPopularMovies = async () => fetchMovies('movie/popular');
-export const getNowPlayingMovies = async () => fetchMovies('movie/now_playing');
-export const getUpcomingMovies = async () => fetchMovies('movie/upcoming');
-export const getTrendingMovies = async (type = MediaType.movie, time = TimeWindow.week) =>
-    fetchMovies(`trending/${type}/${time}`);
