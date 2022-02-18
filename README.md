@@ -1,3 +1,5 @@
+[![Movies](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/r2dbb7&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/r2dbb7/runs)
+
 ## About
 
 [Next.js](https://nextjs.org/) movie browser app using [TheMovieDB API](https://developers.themoviedb.org/3/getting-started/introduction) as a data source.
