@@ -11,6 +11,7 @@
 # testing
 /coverage
 /cypress/cy-initial-examples
+/cypress/videos
 
 # next.js
 /.next/
