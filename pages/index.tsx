@@ -94,7 +94,7 @@ const Home: NextPage<HomePropInterface> = (props) => {
                 <title>Movies browser</title>
             </Head>
 
-            <Container xl as="main" display="flex" direction="column" justify="flex-start" alignItems="center"
+            <Container className={'header'} xl as="main" display="flex" direction="column" justify="flex-start" alignItems="center"
                        style={{height: '100px'}}>
                 <Link href="/">
                     <Text h1 className={styles.title} size={60}
@@ -106,10 +106,10 @@ const Home: NextPage<HomePropInterface> = (props) => {
                 </Link>
             </Container>
 
-            <Grid.Container gap={1} justify="center">
+            <Grid.Container gap={1} justify="center" className={'mainMenu'} >
                 {Object.keys(HomeTabs).map((tab) => {
                     if (tab === 'search') {
-                        return <Grid key={tab} xs={12}>
+                        return <Grid key={tab} xs={12} className={'mainMenuItem'}>
                             <Input
                                 id={'mainSearch'}
                                 onInput={debouncedUserInput}
@@ -125,7 +125,7 @@ const Home: NextPage<HomePropInterface> = (props) => {
                             />
                         </Grid>
                     } else {
-                        return <Grid key={tab} xs={12} sm={6} md={3}>
+                        return <Grid key={tab} xs={12} sm={6} md={3} className={'mainMenuItem'}>
                             <Button
                                 onClick={() => handleTabChange(tab)}
                                 ghost={tab !== activeTab}

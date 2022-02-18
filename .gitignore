@@ -10,6 +10,7 @@
 
 # testing
 /coverage
+/cypress/cy-initial-examples
 
 # next.js
 /.next/
