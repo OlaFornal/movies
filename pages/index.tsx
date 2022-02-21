@@ -6,7 +6,6 @@ import {Container, Card, Button, Input, Grid, Text, Link, Row, Loading, FormElem
 import {Search} from "react-iconly";
 import {
     fetchMovies, MovieListEndpoints
-
 } from "../dataProvider/TheMovieDB/movieList";
 import {MovieTile} from "../components/MovieTile/MovieTile";
 import React, {useMemo, useState} from "react";
@@ -86,7 +85,7 @@ const Home: NextPage<HomePropInterface> = (props) => {
 
     const debouncedUserInput = useMemo(() => {
         return debounce(updateSearchResults, 500)
-    }, [movies]);
+    }, [movies, page, activeTab]);
 
     return (
         <div className={styles.container}>
