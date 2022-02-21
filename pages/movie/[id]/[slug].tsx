@@ -43,6 +43,7 @@ const MovieDetails: NextPage<MovieDetailProps> = ({movieDetails}) => {
                             color="secondary"
                             contentRight={<Search primaryColor={"currentColor"} />}
                             placeholder="Search for movie title..."
+                            aria-label={"Search"}
                         />
                     </Col>
                 </Row>

@@ -13,7 +13,7 @@ export const MovieTile: React.FC<MovieProps> = ({movie}) => {
     const slug = slugify(movie.title, {lower: true, strict: true});
 
     return (
-        <Grid xs={6} sm={4} md={3} lg={3} xl={2}>
+        <Grid xs={6} sm={4} md={3} lg={3} xl={2} className={'movieTile'}>
             <Link href={`movie/${movie.id}/${slug}`}>
                 <Card css={{w: '100%', aspectRatio: '15 / 25'}} className={styles.hoverable} hoverable clickable>
                     <Card.Body css={{ p: 0 }}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Pagination, Grid} from "@nextui-org/react";
 
 interface PaginationProps {

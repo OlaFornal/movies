@@ -122,6 +122,7 @@ const Home: NextPage<HomePropInterface> = (props) => {
                                 color="secondary"
                                 contentRight={<Search primaryColor={"currentColor"}/>}
                                 placeholder="Search for movie title..."
+                                aria-label={"Search"}
                             />
                         </Grid>
                     } else {
