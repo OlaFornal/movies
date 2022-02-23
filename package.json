@@ -8,7 +8,8 @@
     "lint": "next lint",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:ci": "jest --ci"
   },
   "dependencies": {
     "@nextui-org/react": "^1.0.2-beta.3",
