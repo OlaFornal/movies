@@ -27,11 +27,11 @@ class MyDocument extends Document {
                 <Main />
                 <NextScript />
                 <Container>
-                    <Spacer y={1}/>
+                    <Spacer y={0.3}/>
                     <Row align="center" justify="center">
                         <p>This product uses the <Link><a href={'https://www.themoviedb.org/'} target={'_blank'} rel={'noreferrer'}>TMDB API</a></Link> &nbsp;but is not endorsed or certified by TMDB.</p>
                     </Row>
-                    <Spacer y={2}/>
+                    <Spacer y={0.1}/>
                 </Container>
                 </body>
             </Html>
